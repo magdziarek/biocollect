@@ -48,7 +48,7 @@ def httpmimeVersion = "4.2.1"
 def jtsVersion = "1.8"
 def geoToolsVersion = "11.1"
 // Set to true it needed only for development
-boolean inplace = false
+boolean inplace = true
 
 
 dependencies {
@@ -138,6 +138,7 @@ dependencies {
     }
 }
 
+
 springBoot {
     buildInfo()
     layout = WAR
@@ -170,10 +171,10 @@ if (inplace) {
         }
     }
 
-    // Make ecodata-client-plugin _Events task is called
-    assetCompile.dependsOn("ecodata-client-plugin:_Events")
-    compileGroovy.dependsOn("ecodata-client-plugin:_Events")
-    bootRun.dependsOn("ecodata-client-plugin:_Events")
+    /* Make ecodata-client-plugin _Events task is called
+      assetCompile.dependsOn("ecodata-client-plugin:_Events")
+      compileGroovy.dependsOn("ecodata-client-plugin:_Events")
+      bootRun.dependsOn("ecodata-client-plugin:_Events") */
 }
 
 task _Events {
