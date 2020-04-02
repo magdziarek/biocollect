@@ -584,7 +584,7 @@ def uploadSite(server_url, site){
 // set some headers
     connection.setRequestProperty('userName', Globals.USERNAME)
     connection.setRequestProperty('authKey', Globals.AUTH_KEY)
-// connection.setRequestProperty('Cookie', 'recentHub=ala; _ga=GA1.3.166953798.1511148250; _gid=GA1.3.442296331.1516576819; __utma=8847461.166953798.1511148250.1516579788.1516579788.1; __utmc=8847461; __utmz=8847461.1516579788.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); __utmc=90279561; recentHub=ala; ALA-Auth="qifeng.bai@csiro.au"; JSESSIONID=35157A1019A90D4336D79217F55223A5; _gat=1; __utma=90279561.1366919216.1503969276.1516665164.1516685701.62; __utmb=90279561.0.10.1516685701; __utmz=90279561.1516685701.62.11.utmcsr=auth.ala.org.au|utmccn=(referral)|utmcmd=referral|utmcct=/cas/login')
+// connection.setRequestProperty('Cookie', 'recentHub=ala; _ga=GA1.3.166953798.1511148250; _gid=GA1.3.442296331.1516576819; __utma=8847461.166953798.1511148250.1516579788.1516579788.1; __utmc=8847461; __utmz=8847461.1516579788.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); __utmc=90279561; recentHub=ala; ALA-Auth="qifeng.bai@csiro.au"; JSESSIONID=35157A1019A90D4336D79217F55223A5; _gat=1; __utma=90279561.1366919216.1503969276.1516665164.1516685701.62; __utmb=90279561.0.10.1516685701; __utmz=90279561.1516685701.62.11.utmcsr=auth.bioatlas.se|utmccn=(referral)|utmcmd=referral|utmcct=/cas/login')
 // connection.setRequestProperty('Content-Type', 'connection.setRequestProperty(\'authKey\', auth_key)')
     connection.setRequestProperty("Content-Type", "application/json")
     connection.setRequestMethod("POST")

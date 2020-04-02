@@ -429,8 +429,8 @@ class FCTagLib {
         def logoutUrl = attrs.logoutUrl ?: serverUrl + "/session/logout"
         def loginReturnToUrl = attrs.loginReturnToUrl ?: requestUri
         def logoutReturnToUrl = attrs.logoutReturnToUrl ?: requestUri
-        def casLoginUrl = attrs.casLoginUrl ?: grailsApplication.config.security.cas.loginUrl ?: "https://auth.ala.org.au/cas/login"
-        def casLogoutUrl = attrs.casLogoutUrl ?: grailsApplication.config.security.cas.logoutUrl ?: "https://auth.ala.org.au/cas/logout"
+        def casLoginUrl = attrs.casLoginUrl ?: grailsApplication.config.security.cas.loginUrl ?: "https://auth.bioatlas.se/cas/login"
+        def casLogoutUrl = attrs.casLogoutUrl ?: grailsApplication.config.security.cas.logoutUrl ?: "https://auth.bioatlas.se/cas/logout"
         def cssClass = attrs.cssClass?:"btn btn-small btn-inverse btn-login"
         def output
         def iconClass = attrs.iconClass?:("icon-off ${(cssClass.contains("btn-login")) ? "icon-white" : ""}")
@@ -451,7 +451,7 @@ class FCTagLib {
     }
 
     def loginInNewWindow = { attr, body ->
-        def casLoginUrl = grailsApplication.config.security.cas.loginUrl ?: "https://auth.ala.org.au/cas/login"
+        def casLoginUrl = grailsApplication.config.security.cas.loginUrl ?: "https://auth.bioatlas.se/cas/login"
         out << "<a href=\"${casLoginUrl}?service=${createLink(absolute: true, controller: 'home', action:'close')}\" target=\"fieldcapture-login\">${body}</a>"
     }
 
