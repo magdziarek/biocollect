@@ -211,7 +211,10 @@ function ProjectFinder(config) {
             var overlayLayersMapControlConfig = Biocollect.MapUtilities.getOverlayConfig();
             var baseLayersAndOverlays = Biocollect.MapUtilities.getBaseLayerAndOverlayFromMapConfiguration(fcConfig.mapLayersConfig);
             spatialFilter = new ALA.Map("mapFilter", {
+                autoZIndex: false,
+                preserveZIndex: true,
                 addLayersControlHeading: true,
+                allowSearchRegionByAddress: false,
                 wmsLayerUrl: overlayLayersMapControlConfig.wmsLayerUrl,
                 wmsFeatureUrl: overlayLayersMapControlConfig.wmsFeatureUrl,
                 myLocationControlTitle: "Within " + fcConfig.defaultSearchRadiusMetersForPoint + " of my location",
@@ -282,7 +285,7 @@ function ProjectFinder(config) {
 
         var queryString = '';
 
-        if (pageWindow.filterViewModel.redefineFacet()) {
+      //  if (pageWindow.filterViewModel.redefineFacet()) {
 
             var selectedList = pageWindow.filterViewModel.selectedFacets();
             var origFacetList = pageWindow.filterViewModel.origSelectedFacet();
@@ -330,8 +333,6 @@ function ProjectFinder(config) {
                 }
             });
 
-            var fqList = [];
-
             for (var term in dupFacet) {
                 var andFacetTermList = [];
                 var facetList = dupFacet[term];
@@ -360,18 +361,26 @@ function ProjectFinder(config) {
                 fq.push(facet.getQueryText())
             });
 
-        } else {
+      /*  } else {
             pageWindow.filterViewModel.selectedFacets().forEach(function (facet) {
                 fq.push(facet.getQueryText())
             });
-        }
+        }*/
 
         var query = this.getQuery(true);
-        if (query.length > 0 && queryString.length > 0) {
-            query = query + ' AND ' + queryString;
+        if (query.length > 0) {
+            query = query + ((queryString.length > 0)? ' AND ' + queryString: "");
         } else {
             query = queryString;
         }
+
+        var queryList = [];
+
+        var selectedFacetList = pageWindow.filterViewModel.selectedFacets();
+
+        selectedFacetList.forEach(function (facet) {
+            queryList.push(facet.getQueryText())
+        });
 
         var map = {
             fq: fq,
@@ -388,7 +397,9 @@ function ProjectFinder(config) {
             skipDefaultFilters:fcConfig.showAllProjects,
             isWorldWide: isWorldWide,
             projectId: selectedProjectId,
-            q: query
+            q: query,
+            queryList: queryList,
+            queryText: this.getQuery(true)
         };
 
         map.max =  perPage // Page size
@@ -451,7 +462,7 @@ function ProjectFinder(config) {
                 var projectVMs = [], facets;
                 total = data.total;
                 if (total == 0 && pageWindow.filterViewModel.redefineFacet() && pageWindow.filterViewModel.origSelectedFacet().length > 0) {
-                    bootbox.alert ("There are no projects within the Main Filter that fulfils the conditions in the Sub Filter. Please click 'Clear all' to redefine the search criteria. ")
+                    bootbox.alert ("There are no projects that fulfil the filter condition. Please click 'Clear all' to redefine the search criteria. ")
                 }
                 $.each(data.projects, function (i, project) {
                     projectVMs.push(new ProjectViewModel(project, false));
@@ -580,7 +591,7 @@ function ProjectFinder(config) {
 
     this.paginationInfo = function () {
         if (total > 0) {
-            var start = offset + 1;
+            var start = parseInt(offset) + 1;
             var end = Math.min(total, start + perPage - 1);
             var message = fcConfig.paginationMessage || 'Showing XXXX to YYYY of ZZZZ projects';
             return message.replace('XXXX', start).replace('YYYY', end).replace('ZZZZ', total);
@@ -640,6 +651,8 @@ function ProjectFinder(config) {
         var overlayLayersMapControlConfig = Biocollect.MapUtilities.getOverlayConfig();
         var baseLayerOverlayConfig = Biocollect.MapUtilities.getBaseLayerAndOverlayFromMapConfiguration(fcConfig.mapLayersConfig);
         var mapOptions = {
+            autoZIndex: false,
+            preserveZIndex: true,
             addLayersControlHeading: true,
             drawControl: false,
             showReset: false,
@@ -648,7 +661,6 @@ function ProjectFinder(config) {
             allowSearchLocationByAddress: false,
             allowSearchRegionByAddress: false,
             defaultLayersControl: true,
-            singleDraw: false,
             trackWindowHeight: true,
             wmsLayerUrl: overlayLayersMapControlConfig.wmsLayerUrl,
             wmsFeatureUrl: overlayLayersMapControlConfig.wmsFeatureUrl,
@@ -964,7 +976,7 @@ function ProjectFinder(config) {
         var hash = [];
         for (var param in params) {
             if (params.hasOwnProperty(param) && params[param] && params[param] != '') {
-                if ((param != 'geoSearchJSON') && (param != 'fq')) {
+                if ((param != 'geoSearchJSON') && (param != 'fq') && (param != 'queryList')) {
                     hash.push(param + "=" + params[param]);
                 }
             }
@@ -976,7 +988,13 @@ function ProjectFinder(config) {
 
         if (!_.isEmpty(params.fq)) {
             params.fq.forEach(function (filter) {
-                hash.push('fq=' + filter)
+                hash.push('fq=' + encodeURIComponent (filter))
+            })
+        }
+
+        if (!_.isEmpty(params.queryList)) {
+            params.queryList.forEach(function (filter) {
+                hash.push('queryList=' + encodeURIComponent (filter))
             })
         }
 
@@ -1012,7 +1030,8 @@ function ProjectFinder(config) {
 
         params.q = self.santitizeQuery(params.q);
         setGeoSearch(params.geoSearch);
-        pageWindow.filterViewModel.setFilterQuery(params.fq);
+      //  pageWindow.filterViewModel.setFilterQuery(params.fq);
+        pageWindow.filterViewModel.setFilterQuery(params.queryList);
         offset = params.offset || offset;
         selectedProjectId = params.projectId;
 
@@ -1026,7 +1045,7 @@ function ProjectFinder(config) {
         checkButton($("#pt-per-page"), params.max || '20');
         checkButton($("#pt-aus-world"), params.isWorldWide || 'false');
         
-        $('#pt-search').val(params.q).focus();
+        $('#pt-search').val(params.queryText).focus();
         pageWindow.filterViewModel.switchOffSearch(false);
     }
 
